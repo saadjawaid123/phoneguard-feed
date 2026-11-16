@@ -1,0 +1,1 @@
+# Scam websites we add ourselves, one per line. Reviewed reports go here.

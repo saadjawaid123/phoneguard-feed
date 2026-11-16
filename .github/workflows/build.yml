@@ -1,0 +1,34 @@
+name: Build signed feed
+
+on:
+  schedule:
+    - cron: '23 1 * * *'   # once a day
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: feed
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install cryptography==44.0.0
+      - name: Build and sign
+        env:
+          FEED_SIGNING_KEY: ${{ secrets.FEED_SIGNING_KEY }}
+        run: python3 build_feed.py
+      - name: Publish
+        run: |
+          git config user.name "phoneguard-feed"
+          git config user.email "actions@users.noreply.github.com"
+          git add block.bin feed.json feed.json.sig
+          git diff --cached --quiet || git commit -m "feed: update $(date -u +%F)"
+          git push

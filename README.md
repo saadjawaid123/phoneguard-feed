@@ -12,4 +12,11 @@ Sources and licences: Phishing.Database (MIT), URLhaus by abuse.ch (CC0), and ou
 (`own-block.txt`). The 10,000 most visited websites (`never-block.txt`, from the Tranco list) are
 always removed, so a mistake in a source cannot flag a famous website.
 
+Other files:
+- `delta.bin` is the change since the previous list, so phones download a few bytes instead of 3 MB.
+- `allow.bin` is built from `own-allow.txt`: websites PhoneGuard never calls a scam.
+- `apps.out.json` is the checked copy of `apps.json`: official apps and their signing keys for App
+  Authenticity Check. Add a key only after reading it from a real install from Google Play.
+- `import_reports.py` (weekly) turns user reports into a pull request. Merging it is the review.
+
 Found a wrong entry? Open an issue with the website name.

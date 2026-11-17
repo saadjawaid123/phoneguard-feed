@@ -1,0 +1,22 @@
+# Websites PhoneGuard never calls a scam, even if a public list names them.
+# One website per line. Add only after checking the real owner. Reviewed in a pull request.
+# Bug B1 (12 Nov 2026): a real agency website that looks like a famous one.
+digitas.com
+# Pakistan banks and wallets (official websites)
+hbl.com
+jazzcash.com.pk
+easypaisa.com.pk
+meezanbank.com
+ubldigital.com
+ubl.com.pk
+mcb.com.pk
+bankalfalah.com
+faysalbank.com
+abl.com
+sadapay.pk
+nayapay.com
+sbp.org.pk
+# Pakistan government services often named in scams (real ones)
+fbr.gov.pk
+nadra.gov.pk
+pta.gov.pk

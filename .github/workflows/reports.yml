@@ -1,0 +1,37 @@
+name: User reports to review
+
+on:
+  schedule:
+    - cron: '41 3 * * 1'   # every Monday
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install google-auth==2.36.0 requests==2.32.3
+      - name: Read reports
+        env:
+          FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
+        run: python3 import_reports.py
+      - name: Open a review pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git diff --quiet && exit 0
+          b="reports/$(date -u +%F)"
+          git config user.name "phoneguard-feed"
+          git config user.email "actions@users.noreply.github.com"
+          git checkout -b "$b"
+          git add own-block.txt own-allow.txt review
+          git commit -m "feed: user reports to review $(date -u +%F)"
+          git push -u origin "$b"
+          gh pr create --title "User reports to review $(date -u +%F)" --body "Check every new line, then merge. Merging is the review; the next build signs it."

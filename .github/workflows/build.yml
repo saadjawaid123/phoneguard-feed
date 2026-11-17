@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: '23 1 * * *'   # once a day
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["own-block.txt", "own-allow.txt", "apps.json", "never-block.txt", "build_feed.py"]
 
 permissions:
   contents: write
@@ -21,14 +24,18 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install cryptography==44.0.0
+      - name: Test the builder
+        run: python3 test_build_feed.py
       - name: Build and sign
         env:
           FEED_SIGNING_KEY: ${{ secrets.FEED_SIGNING_KEY }}
+          URLHAUS_KEY: ${{ secrets.URLHAUS_KEY }}
         run: python3 build_feed.py
       - name: Publish
         run: |
           git config user.name "phoneguard-feed"
           git config user.email "actions@users.noreply.github.com"
-          git add block.bin feed.json feed.json.sig
+          git add block.bin allow.bin apps.out.json feed.json feed.json.sig
+          [ -f delta.bin ] && git add delta.bin || git rm -q --cached --ignore-unmatch delta.bin
           git diff --cached --quiet || git commit -m "feed: update $(date -u +%F)"
           git push
